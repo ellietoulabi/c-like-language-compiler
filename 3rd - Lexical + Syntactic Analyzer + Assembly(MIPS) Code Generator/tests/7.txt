@@ -1,0 +1,83 @@
+input:
+
+int main(){
+	int a = 0;
+	if(a > 0){
+		int b = a;
+	}
+	else{
+		int c = d;
+	}
+
+	foreach a (1 .. 5){
+		print(c);
+	}
+}
+
+output:
+
+
+
+[+] Parse : 
+
+ PROGRAM  main_function  typeSpecifier int main  (  )  compoundStmt  { 1456726347 statements  stmt 2055580584 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier a identifier  TOKEN_ID = constants 0 ;  statements  stmt 98610440 singleStmt  conditionStmt  if  (  expression  sub_expr  sub_expr  identifier a >  sub_expr  constants 0 )  compoundStmt  { 2055580584 statements  stmt 2055580584 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier b identifier  TOKEN_ID = identifier a ;  }  else  compoundStmt  { 0 declaration_list  sub_decl  assignment_expr  identifier b identifier  TOKEN_ID = identifier a statements  stmt 0 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier c identifier  TOKEN_ID = identifier d ;  }  statements  stmt 1456726347 singleStmt  loopStmt  foreach  identifier a (  expression  sub_expr  constants 1 ..  expression  sub_expr  constants 5 )  compoundStmt  { 98610440 declaration_list  sub_decl  assignment_expr  identifier c identifier  TOKEN_ID = identifier d statements  stmt 98610440 singleStmt  printFunc  (  sub_expr  identifier c )  ;  }  } 
+
+
+[+] ASM :
+.data
+        backn: .asciiz "\n"
+.text
+.globl main
+main :
+        daddiu  $sp,$sp,-8
+        sd      $fp,0($sp)
+        move    $fp,$sp
+        li      $t0,0
+        sw      $t0,0($fp)
+        lw  $t0,0($fp)
+        move  $t0,$t6
+        li  $t0,0
+        move  $t0,$t7
+        ble  $t6,$7,C0
+        nop
+        lw  $t0,0($fp)
+        sw   $t0,4($fp)
+        b     C1
+        nop
+C0
+        lw  $t0,0($fp)
+        sw   $t0,4($fp)
+        lw  $t0,0($fp)
+        sw   $t0,0($fp)
+C1:
+L1:
+        li    $s0,1
+        li    $s1,5
+        bgt   $s0,$s1,L0
+        nop
+        sw    $s0,0($fp)
+        lw  $t0,0($fp)
+        sw   $t0,0($fp)
+        lw     $a0,0($fp)
+        li   $v0,1
+        syscall
+        addiu $s0,$s0,1
+        sw    $s0,0($fp)
+        b     L1
+        nop
+L0
+        move    $v0,$0
+        move    $sp,$fp
+        ld      $fp,0($sp)
+        daddiu  $sp,$sp,8
+        j       $31
+        nop
+
+
+
+[#] ERRORS :
+
+
+[-] ERROR : LINE 7 COLUMN 25 : Variable not declared
+[-] ERROR : LINE 7 COLUMN 26 : Type mismatch in assignment expression
+ellie@ubuntu:~/Documents/workspace/compiler 3rd/c/Elaheh_ToulabiNejad_9631232_2nd$ 

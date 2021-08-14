@@ -1,0 +1,9 @@
+bison -d Parser.y -v
+mv Parser.tab.h Parser.h
+mv Parser.tab.c Parser.y.c
+flex Parser.lex
+mv lex.yy.c Parser.lex.c
+g++ -g -c Parser.lex.c -o Parser.lex.o
+g++ -g -c Parser.y.c -o Parser.y.o
+g++ -g -o Parser Parser.lex.o Parser.y.o -lfl
+./Parser 1 < sample.txt

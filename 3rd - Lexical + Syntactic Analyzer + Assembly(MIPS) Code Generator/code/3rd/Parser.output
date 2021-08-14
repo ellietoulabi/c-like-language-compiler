@@ -1,0 +1,2397 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: globalVars
+
+    2 globalVars: typeSpecifier identifier TOKEN_ASSIGNOP constants TOKEN_SEMICOLON globalVars
+    3           | function
+
+    4 $@1: %empty
+
+    5 $@2: %empty
+
+    6 $@3: %empty
+
+    7 function: typeSpecifier TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN $@3 compoundStmt
+
+    8 $@4: %empty
+
+    9 $@5: %empty
+
+   10 $@6: %empty
+
+   11 $@7: %empty
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+   13 argumentList: arguments
+   14             | %empty
+
+   15 arguments: arguments TOKEN_COMMA arg
+   16          | arg
+
+   17 arg: typeSpecifier identifier
+   18    | typeSpecifier identifier TOKEN_LB constants TOKEN_RB
+
+   19 statements: statements stmt
+   20           | %empty
+
+   21 stmt: compoundStmt
+   22     | singleStmt
+
+   23 compoundStmt: TOKEN_LCB statements TOKEN_RCB
+
+   24 singleStmt: conditionStmt
+   25           | loopStmt
+   26           | declaration
+   27           | functionCall TOKEN_SEMICOLON
+   28           | printFunc TOKEN_SEMICOLON
+   29           | TOKEN_RETURN TOKEN_SEMICOLON
+   30           | TOKEN_CONTINUESTMT TOKEN_SEMICOLON
+   31           | TOKEN_BREAKSTMT TOKEN_SEMICOLON
+   32           | TOKEN_RETURN sub_expr TOKEN_SEMICOLON
+
+   33 printFunc: TOKEN_PRFUNC TOKEN_LEFTPAREN sub_expr TOKEN_RIGHTPAREN
+
+   34 conditionStmt: TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt
+   35              | TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt TOKEN_ELSECONDITION compoundStmt
+
+   36 $@8: %empty
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN expression TOKEN_UNTIL expression TOKEN_RIGHTPAREN $@8 compoundStmt
+
+   38 functionCall: identifier TOKEN_LEFTPAREN parameter_list TOKEN_RIGHTPAREN
+   39             | identifier TOKEN_LEFTPAREN TOKEN_RIGHTPAREN
+
+   40 parameter_list: parameter_list TOKEN_COMMA parameter
+   41               | parameter
+
+   42 parameter: sub_expr
+
+   43 declaration: typeSpecifier declaration_list TOKEN_SEMICOLON
+   44            | declaration_list TOKEN_SEMICOLON
+
+   45 declaration_list: declaration_list TOKEN_COMMA sub_decl
+   46                 | sub_decl
+
+   47 sub_decl: assignment_expr
+   48         | identifier
+   49         | array_access
+
+   50 expression: expression TOKEN_COMMA sub_expr
+   51           | sub_expr
+
+   52 sub_expr: sub_expr TOKEN_GR sub_expr
+   53         | sub_expr TOKEN_LS sub_expr
+   54         | sub_expr TOKEN_EQ sub_expr
+   55         | sub_expr TOKEN_NOTEQ sub_expr
+   56         | sub_expr TOKEN_LSEQ sub_expr
+   57         | sub_expr TOKEN_GREQ sub_expr
+   58         | sub_expr TOKEN_LOGICAND sub_expr
+   59         | sub_expr TOKEN_LOGICOR sub_expr
+   60         | TOKEN_LOGICNOT sub_expr
+   61         | arithmetic_expr
+   62         | assignment_expr
+
+   63 assgn: TOKEN_ASSIGNOP
+
+   64 assignment_expr: lhs assgn arithmetic_expr
+   65                | lhs assgn functionCall
+   66                | lhs assgn array_init
+
+   67 lhs: identifier
+   68    | array_access
+
+   69 identifier: TOKEN_ID
+
+   70 arithmetic_expr: arithmetic_expr TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr TOKEN_BITWISEOR arithmetic_expr
+   77                | TOKEN_LEFTPAREN arithmetic_expr TOKEN_RIGHTPAREN
+   78                | TOKEN_MINUS arithmetic_expr
+   79                | identifier
+   80                | constants
+   81                | array_access
+
+   82 array_init_vars: array_init_vars TOKEN_COMMA constants
+   83                | constants
+
+   84 array_init: TOKEN_LCB array_init_vars TOKEN_RCB
+
+   85 array_access: identifier TOKEN_LB constants TOKEN_RB
+
+   86 typeSpecifier: TOKEN_INTTYPE
+   87              | TOKEN_FLOATTYPE
+   88              | TOKEN_DOUBLETYPE
+   89              | TOKEN_CHARTYPE
+   90              | TOKEN_STRINGTYPE
+   91              | TOKEN_VOIDTYPE
+
+   92 constants: TOKEN_INTCONST
+   93          | TOKEN_CHARCONST
+   94          | TOKEN_FLOATCONST
+   95          | TOKEN_STRINGCONST
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256)
+TOKEN_ID (258) 69
+TOKEN_RETURN (259) 29 32
+TOKEN_STRINGCONST (260) 95
+TOKEN_MAINFUNC (261) 7
+TOKEN_PRFUNC (262) 33
+TOKEN_LOOP (263) 37
+TOKEN_ELSECONDITION (264) 35
+TOKEN_IFCONDITION (265) 34 35
+TOKEN_CONTINUESTMT (266) 30
+TOKEN_BREAKSTMT (267) 31
+TOKEN_INTTYPE (268) 86
+TOKEN_FLOATTYPE (269) 87
+TOKEN_DOUBLETYPE (270) 88
+TOKEN_CHARTYPE (271) 89
+TOKEN_STRINGTYPE (272) 90
+TOKEN_VOIDTYPE (273) 91
+TOKEN_CHARCONST (274) 93
+TOKEN_ASSIGNOP (275) 2 63
+TOKEN_LEFTPAREN (276) 7 12 33 34 35 37 38 39 77
+TOKEN_RIGHTPAREN (277) 7 12 33 34 35 37 38 39 77
+TOKEN_LCB (278) 23 84
+TOKEN_RCB (279) 23 84
+TOKEN_SEMICOLON (280) 2 27 28 29 30 31 32 43 44
+TOKEN_COMMA (281) 15 40 45 50 82
+TOKEN_UNTIL (282) 37
+TOKEN_LB (283) 18 85
+TOKEN_RB (284) 18 85
+TOKEN_INTCONST (285) 92
+TOKEN_FLOATCONST (286) 94
+TOKEN_PLUS (287) 70
+TOKEN_MINUS (288) 71 78
+TOKEN_MUL (289) 72
+TOKEN_DIV (290) 73
+TOKEN_POW (291) 74
+TOKEN_LOGICAND (292) 58
+TOKEN_LOGICOR (293) 59
+TOKEN_LOGICNOT (294) 60
+TOKEN_BITWISEAND (295) 75
+TOKEN_BITWISEOR (296) 76
+TOKEN_EQ (297) 54
+TOKEN_NOTEQ (298) 55
+TOKEN_GR (299) 52
+TOKEN_LS (300) 53
+TOKEN_LSEQ (301) 56
+TOKEN_GREQ (302) 57
+UMINUS (303)
+
+
+Nonterminals, with rules where they appear
+
+$accept (49)
+    on left: 0
+program (50)
+    on left: 1, on right: 0
+globalVars (51)
+    on left: 2 3, on right: 1 2
+function (52)
+    on left: 7 12, on right: 3 12
+$@1 (53)
+    on left: 4, on right: 7
+$@2 (54)
+    on left: 5, on right: 7
+$@3 (55)
+    on left: 6, on right: 7
+$@4 (56)
+    on left: 8, on right: 12
+$@5 (57)
+    on left: 9, on right: 12
+$@6 (58)
+    on left: 10, on right: 12
+$@7 (59)
+    on left: 11, on right: 12
+argumentList (60)
+    on left: 13 14, on right: 12
+arguments (61)
+    on left: 15 16, on right: 13 15
+arg (62)
+    on left: 17 18, on right: 15 16
+statements (63)
+    on left: 19 20, on right: 19 23
+stmt (64)
+    on left: 21 22, on right: 19
+compoundStmt (65)
+    on left: 23, on right: 7 12 21 34 35 37
+singleStmt (66)
+    on left: 24 25 26 27 28 29 30 31 32, on right: 22
+printFunc (67)
+    on left: 33, on right: 28
+conditionStmt (68)
+    on left: 34 35, on right: 24
+loopStmt (69)
+    on left: 37, on right: 25
+$@8 (70)
+    on left: 36, on right: 37
+functionCall (71)
+    on left: 38 39, on right: 27 65
+parameter_list (72)
+    on left: 40 41, on right: 38 40
+parameter (73)
+    on left: 42, on right: 40 41
+declaration (74)
+    on left: 43 44, on right: 26
+declaration_list (75)
+    on left: 45 46, on right: 43 44 45
+sub_decl (76)
+    on left: 47 48 49, on right: 45 46
+expression (77)
+    on left: 50 51, on right: 34 35 37 50
+sub_expr (78)
+    on left: 52 53 54 55 56 57 58 59 60 61 62, on right: 32 33 42 50
+    51 52 53 54 55 56 57 58 59 60
+assgn (79)
+    on left: 63, on right: 64 65 66
+assignment_expr (80)
+    on left: 64 65 66, on right: 47 62
+lhs (81)
+    on left: 67 68, on right: 64 65 66
+identifier (82)
+    on left: 69, on right: 2 12 17 18 37 38 39 48 67 79 85
+arithmetic_expr (83)
+    on left: 70 71 72 73 74 75 76 77 78 79 80 81, on right: 61 64 70
+    71 72 73 74 75 76 77 78
+array_init_vars (84)
+    on left: 82 83, on right: 82 84
+array_init (85)
+    on left: 84, on right: 66
+array_access (86)
+    on left: 85, on right: 49 68 81
+typeSpecifier (87)
+    on left: 86 87 88 89 90 91, on right: 2 7 12 17 18 43
+constants (88)
+    on left: 92 93 94 95, on right: 2 18 80 82 83 85
+
+
+State 0
+
+    0 $accept: . program $end
+
+    TOKEN_INTTYPE     shift, and go to state 1
+    TOKEN_FLOATTYPE   shift, and go to state 2
+    TOKEN_DOUBLETYPE  shift, and go to state 3
+    TOKEN_CHARTYPE    shift, and go to state 4
+    TOKEN_STRINGTYPE  shift, and go to state 5
+    TOKEN_VOIDTYPE    shift, and go to state 6
+
+    program        go to state 7
+    globalVars     go to state 8
+    function       go to state 9
+    typeSpecifier  go to state 10
+
+
+State 1
+
+   86 typeSpecifier: TOKEN_INTTYPE .
+
+    $default  reduce using rule 86 (typeSpecifier)
+
+
+State 2
+
+   87 typeSpecifier: TOKEN_FLOATTYPE .
+
+    $default  reduce using rule 87 (typeSpecifier)
+
+
+State 3
+
+   88 typeSpecifier: TOKEN_DOUBLETYPE .
+
+    $default  reduce using rule 88 (typeSpecifier)
+
+
+State 4
+
+   89 typeSpecifier: TOKEN_CHARTYPE .
+
+    $default  reduce using rule 89 (typeSpecifier)
+
+
+State 5
+
+   90 typeSpecifier: TOKEN_STRINGTYPE .
+
+    $default  reduce using rule 90 (typeSpecifier)
+
+
+State 6
+
+   91 typeSpecifier: TOKEN_VOIDTYPE .
+
+    $default  reduce using rule 91 (typeSpecifier)
+
+
+State 7
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 11
+
+
+State 8
+
+    1 program: globalVars .
+
+    $default  reduce using rule 1 (program)
+
+
+State 9
+
+    3 globalVars: function .
+
+    $default  reduce using rule 3 (globalVars)
+
+
+State 10
+
+    2 globalVars: typeSpecifier . identifier TOKEN_ASSIGNOP constants TOKEN_SEMICOLON globalVars
+    7 function: typeSpecifier . TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN $@3 compoundStmt
+   12         | typeSpecifier . identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    TOKEN_ID        shift, and go to state 12
+    TOKEN_MAINFUNC  shift, and go to state 13
+
+    identifier  go to state 14
+
+
+State 11
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 12
+
+   69 identifier: TOKEN_ID .
+
+    $default  reduce using rule 69 (identifier)
+
+
+State 13
+
+    7 function: typeSpecifier TOKEN_MAINFUNC . $@1 TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN $@3 compoundStmt
+
+    $default  reduce using rule 4 ($@1)
+
+    $@1  go to state 15
+
+
+State 14
+
+    2 globalVars: typeSpecifier identifier . TOKEN_ASSIGNOP constants TOKEN_SEMICOLON globalVars
+   12 function: typeSpecifier identifier . $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    TOKEN_ASSIGNOP  shift, and go to state 16
+
+    $default  reduce using rule 8 ($@4)
+
+    $@4  go to state 17
+
+
+State 15
+
+    7 function: typeSpecifier TOKEN_MAINFUNC $@1 . TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN $@3 compoundStmt
+
+    TOKEN_LEFTPAREN  shift, and go to state 18
+
+
+State 16
+
+    2 globalVars: typeSpecifier identifier TOKEN_ASSIGNOP . constants TOKEN_SEMICOLON globalVars
+
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+
+    constants  go to state 23
+
+
+State 17
+
+   12 function: typeSpecifier identifier $@4 . TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    TOKEN_LEFTPAREN  shift, and go to state 24
+
+
+State 18
+
+    7 function: typeSpecifier TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN . $@2 TOKEN_RIGHTPAREN $@3 compoundStmt
+
+    $default  reduce using rule 5 ($@2)
+
+    $@2  go to state 25
+
+
+State 19
+
+   95 constants: TOKEN_STRINGCONST .
+
+    $default  reduce using rule 95 (constants)
+
+
+State 20
+
+   93 constants: TOKEN_CHARCONST .
+
+    $default  reduce using rule 93 (constants)
+
+
+State 21
+
+   92 constants: TOKEN_INTCONST .
+
+    $default  reduce using rule 92 (constants)
+
+
+State 22
+
+   94 constants: TOKEN_FLOATCONST .
+
+    $default  reduce using rule 94 (constants)
+
+
+State 23
+
+    2 globalVars: typeSpecifier identifier TOKEN_ASSIGNOP constants . TOKEN_SEMICOLON globalVars
+
+    TOKEN_SEMICOLON  shift, and go to state 26
+
+
+State 24
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN . $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    $default  reduce using rule 9 ($@5)
+
+    $@5  go to state 27
+
+
+State 25
+
+    7 function: typeSpecifier TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN $@2 . TOKEN_RIGHTPAREN $@3 compoundStmt
+
+    TOKEN_RIGHTPAREN  shift, and go to state 28
+
+
+State 26
+
+    2 globalVars: typeSpecifier identifier TOKEN_ASSIGNOP constants TOKEN_SEMICOLON . globalVars
+
+    TOKEN_INTTYPE     shift, and go to state 1
+    TOKEN_FLOATTYPE   shift, and go to state 2
+    TOKEN_DOUBLETYPE  shift, and go to state 3
+    TOKEN_CHARTYPE    shift, and go to state 4
+    TOKEN_STRINGTYPE  shift, and go to state 5
+    TOKEN_VOIDTYPE    shift, and go to state 6
+
+    globalVars     go to state 29
+    function       go to state 9
+    typeSpecifier  go to state 10
+
+
+State 27
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 . argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    TOKEN_INTTYPE     shift, and go to state 1
+    TOKEN_FLOATTYPE   shift, and go to state 2
+    TOKEN_DOUBLETYPE  shift, and go to state 3
+    TOKEN_CHARTYPE    shift, and go to state 4
+    TOKEN_STRINGTYPE  shift, and go to state 5
+    TOKEN_VOIDTYPE    shift, and go to state 6
+
+    $default  reduce using rule 14 (argumentList)
+
+    argumentList   go to state 30
+    arguments      go to state 31
+    arg            go to state 32
+    typeSpecifier  go to state 33
+
+
+State 28
+
+    7 function: typeSpecifier TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN . $@3 compoundStmt
+
+    $default  reduce using rule 6 ($@3)
+
+    $@3  go to state 34
+
+
+State 29
+
+    2 globalVars: typeSpecifier identifier TOKEN_ASSIGNOP constants TOKEN_SEMICOLON globalVars .
+
+    $default  reduce using rule 2 (globalVars)
+
+
+State 30
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 argumentList . TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    TOKEN_RIGHTPAREN  shift, and go to state 35
+
+
+State 31
+
+   13 argumentList: arguments .
+   15 arguments: arguments . TOKEN_COMMA arg
+
+    TOKEN_COMMA  shift, and go to state 36
+
+    $default  reduce using rule 13 (argumentList)
+
+
+State 32
+
+   16 arguments: arg .
+
+    $default  reduce using rule 16 (arguments)
+
+
+State 33
+
+   17 arg: typeSpecifier . identifier
+   18    | typeSpecifier . identifier TOKEN_LB constants TOKEN_RB
+
+    TOKEN_ID  shift, and go to state 12
+
+    identifier  go to state 37
+
+
+State 34
+
+    7 function: typeSpecifier TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN $@3 . compoundStmt
+
+    TOKEN_LCB  shift, and go to state 38
+
+    compoundStmt  go to state 39
+
+
+State 35
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN . $@6 compoundStmt $@7 function
+
+    $default  reduce using rule 10 ($@6)
+
+    $@6  go to state 40
+
+
+State 36
+
+   15 arguments: arguments TOKEN_COMMA . arg
+
+    TOKEN_INTTYPE     shift, and go to state 1
+    TOKEN_FLOATTYPE   shift, and go to state 2
+    TOKEN_DOUBLETYPE  shift, and go to state 3
+    TOKEN_CHARTYPE    shift, and go to state 4
+    TOKEN_STRINGTYPE  shift, and go to state 5
+    TOKEN_VOIDTYPE    shift, and go to state 6
+
+    arg            go to state 41
+    typeSpecifier  go to state 33
+
+
+State 37
+
+   17 arg: typeSpecifier identifier .
+   18    | typeSpecifier identifier . TOKEN_LB constants TOKEN_RB
+
+    TOKEN_LB  shift, and go to state 42
+
+    $default  reduce using rule 17 (arg)
+
+
+State 38
+
+   23 compoundStmt: TOKEN_LCB . statements TOKEN_RCB
+
+    $default  reduce using rule 20 (statements)
+
+    statements  go to state 43
+
+
+State 39
+
+    7 function: typeSpecifier TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN $@3 compoundStmt .
+
+    $default  reduce using rule 7 (function)
+
+
+State 40
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 . compoundStmt $@7 function
+
+    TOKEN_LCB  shift, and go to state 38
+
+    compoundStmt  go to state 44
+
+
+State 41
+
+   15 arguments: arguments TOKEN_COMMA arg .
+
+    $default  reduce using rule 15 (arguments)
+
+
+State 42
+
+   18 arg: typeSpecifier identifier TOKEN_LB . constants TOKEN_RB
+
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+
+    constants  go to state 45
+
+
+State 43
+
+   19 statements: statements . stmt
+   23 compoundStmt: TOKEN_LCB statements . TOKEN_RCB
+
+    TOKEN_ID            shift, and go to state 12
+    TOKEN_RETURN        shift, and go to state 46
+    TOKEN_PRFUNC        shift, and go to state 47
+    TOKEN_LOOP          shift, and go to state 48
+    TOKEN_IFCONDITION   shift, and go to state 49
+    TOKEN_CONTINUESTMT  shift, and go to state 50
+    TOKEN_BREAKSTMT     shift, and go to state 51
+    TOKEN_INTTYPE       shift, and go to state 1
+    TOKEN_FLOATTYPE     shift, and go to state 2
+    TOKEN_DOUBLETYPE    shift, and go to state 3
+    TOKEN_CHARTYPE      shift, and go to state 4
+    TOKEN_STRINGTYPE    shift, and go to state 5
+    TOKEN_VOIDTYPE      shift, and go to state 6
+    TOKEN_LCB           shift, and go to state 38
+    TOKEN_RCB           shift, and go to state 52
+
+    stmt              go to state 53
+    compoundStmt      go to state 54
+    singleStmt        go to state 55
+    printFunc         go to state 56
+    conditionStmt     go to state 57
+    loopStmt          go to state 58
+    functionCall      go to state 59
+    declaration       go to state 60
+    declaration_list  go to state 61
+    sub_decl          go to state 62
+    assignment_expr   go to state 63
+    lhs               go to state 64
+    identifier        go to state 65
+    array_access      go to state 66
+    typeSpecifier     go to state 67
+
+
+State 44
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt . $@7 function
+
+    $default  reduce using rule 11 ($@7)
+
+    $@7  go to state 68
+
+
+State 45
+
+   18 arg: typeSpecifier identifier TOKEN_LB constants . TOKEN_RB
+
+    TOKEN_RB  shift, and go to state 69
+
+
+State 46
+
+   29 singleStmt: TOKEN_RETURN . TOKEN_SEMICOLON
+   32           | TOKEN_RETURN . sub_expr TOKEN_SEMICOLON
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_SEMICOLON    shift, and go to state 71
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 74
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 47
+
+   33 printFunc: TOKEN_PRFUNC . TOKEN_LEFTPAREN sub_expr TOKEN_RIGHTPAREN
+
+    TOKEN_LEFTPAREN  shift, and go to state 80
+
+
+State 48
+
+   37 loopStmt: TOKEN_LOOP . identifier TOKEN_LEFTPAREN expression TOKEN_UNTIL expression TOKEN_RIGHTPAREN $@8 compoundStmt
+
+    TOKEN_ID  shift, and go to state 12
+
+    identifier  go to state 81
+
+
+State 49
+
+   34 conditionStmt: TOKEN_IFCONDITION . TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt
+   35              | TOKEN_IFCONDITION . TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt TOKEN_ELSECONDITION compoundStmt
+
+    TOKEN_LEFTPAREN  shift, and go to state 82
+
+
+State 50
+
+   30 singleStmt: TOKEN_CONTINUESTMT . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 83
+
+
+State 51
+
+   31 singleStmt: TOKEN_BREAKSTMT . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 84
+
+
+State 52
+
+   23 compoundStmt: TOKEN_LCB statements TOKEN_RCB .
+
+    $default  reduce using rule 23 (compoundStmt)
+
+
+State 53
+
+   19 statements: statements stmt .
+
+    $default  reduce using rule 19 (statements)
+
+
+State 54
+
+   21 stmt: compoundStmt .
+
+    $default  reduce using rule 21 (stmt)
+
+
+State 55
+
+   22 stmt: singleStmt .
+
+    $default  reduce using rule 22 (stmt)
+
+
+State 56
+
+   28 singleStmt: printFunc . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 85
+
+
+State 57
+
+   24 singleStmt: conditionStmt .
+
+    $default  reduce using rule 24 (singleStmt)
+
+
+State 58
+
+   25 singleStmt: loopStmt .
+
+    $default  reduce using rule 25 (singleStmt)
+
+
+State 59
+
+   27 singleStmt: functionCall . TOKEN_SEMICOLON
+
+    TOKEN_SEMICOLON  shift, and go to state 86
+
+
+State 60
+
+   26 singleStmt: declaration .
+
+    $default  reduce using rule 26 (singleStmt)
+
+
+State 61
+
+   44 declaration: declaration_list . TOKEN_SEMICOLON
+   45 declaration_list: declaration_list . TOKEN_COMMA sub_decl
+
+    TOKEN_SEMICOLON  shift, and go to state 87
+    TOKEN_COMMA      shift, and go to state 88
+
+
+State 62
+
+   46 declaration_list: sub_decl .
+
+    $default  reduce using rule 46 (declaration_list)
+
+
+State 63
+
+   47 sub_decl: assignment_expr .
+
+    $default  reduce using rule 47 (sub_decl)
+
+
+State 64
+
+   64 assignment_expr: lhs . assgn arithmetic_expr
+   65                | lhs . assgn functionCall
+   66                | lhs . assgn array_init
+
+    TOKEN_ASSIGNOP  shift, and go to state 89
+
+    assgn  go to state 90
+
+
+State 65
+
+   38 functionCall: identifier . TOKEN_LEFTPAREN parameter_list TOKEN_RIGHTPAREN
+   39             | identifier . TOKEN_LEFTPAREN TOKEN_RIGHTPAREN
+   48 sub_decl: identifier .
+   67 lhs: identifier .
+   85 array_access: identifier . TOKEN_LB constants TOKEN_RB
+
+    TOKEN_LEFTPAREN  shift, and go to state 91
+    TOKEN_LB         shift, and go to state 92
+
+    TOKEN_ASSIGNOP  reduce using rule 67 (lhs)
+    $default        reduce using rule 48 (sub_decl)
+
+
+State 66
+
+   49 sub_decl: array_access .
+   68 lhs: array_access .
+
+    TOKEN_ASSIGNOP  reduce using rule 68 (lhs)
+    $default        reduce using rule 49 (sub_decl)
+
+
+State 67
+
+   43 declaration: typeSpecifier . declaration_list TOKEN_SEMICOLON
+
+    TOKEN_ID  shift, and go to state 12
+
+    declaration_list  go to state 93
+    sub_decl          go to state 62
+    assignment_expr   go to state 63
+    lhs               go to state 64
+    identifier        go to state 94
+    array_access      go to state 66
+
+
+State 68
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 . function
+
+    TOKEN_INTTYPE     shift, and go to state 1
+    TOKEN_FLOATTYPE   shift, and go to state 2
+    TOKEN_DOUBLETYPE  shift, and go to state 3
+    TOKEN_CHARTYPE    shift, and go to state 4
+    TOKEN_STRINGTYPE  shift, and go to state 5
+    TOKEN_VOIDTYPE    shift, and go to state 6
+
+    function       go to state 95
+    typeSpecifier  go to state 96
+
+
+State 69
+
+   18 arg: typeSpecifier identifier TOKEN_LB constants TOKEN_RB .
+
+    $default  reduce using rule 18 (arg)
+
+
+State 70
+
+   77 arithmetic_expr: TOKEN_LEFTPAREN . arithmetic_expr TOKEN_RIGHTPAREN
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 98
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 71
+
+   29 singleStmt: TOKEN_RETURN TOKEN_SEMICOLON .
+
+    $default  reduce using rule 29 (singleStmt)
+
+
+State 72
+
+   78 arithmetic_expr: TOKEN_MINUS . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 100
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 73
+
+   60 sub_expr: TOKEN_LOGICNOT . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 101
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 74
+
+   32 singleStmt: TOKEN_RETURN sub_expr . TOKEN_SEMICOLON
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_SEMICOLON  shift, and go to state 102
+    TOKEN_LOGICAND   shift, and go to state 103
+    TOKEN_LOGICOR    shift, and go to state 104
+    TOKEN_EQ         shift, and go to state 105
+    TOKEN_NOTEQ      shift, and go to state 106
+    TOKEN_GR         shift, and go to state 107
+    TOKEN_LS         shift, and go to state 108
+    TOKEN_LSEQ       shift, and go to state 109
+    TOKEN_GREQ       shift, and go to state 110
+
+
+State 75
+
+   62 sub_expr: assignment_expr .
+
+    $default  reduce using rule 62 (sub_expr)
+
+
+State 76
+
+   67 lhs: identifier .
+   79 arithmetic_expr: identifier .
+   85 array_access: identifier . TOKEN_LB constants TOKEN_RB
+
+    TOKEN_LB  shift, and go to state 92
+
+    TOKEN_ASSIGNOP  reduce using rule 67 (lhs)
+    $default        reduce using rule 79 (arithmetic_expr)
+
+
+State 77
+
+   61 sub_expr: arithmetic_expr .
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    TOKEN_PLUS        shift, and go to state 111
+    TOKEN_MINUS       shift, and go to state 112
+    TOKEN_MUL         shift, and go to state 113
+    TOKEN_DIV         shift, and go to state 114
+    TOKEN_POW         shift, and go to state 115
+    TOKEN_BITWISEAND  shift, and go to state 116
+    TOKEN_BITWISEOR   shift, and go to state 117
+
+    $default  reduce using rule 61 (sub_expr)
+
+
+State 78
+
+   68 lhs: array_access .
+   81 arithmetic_expr: array_access .
+
+    TOKEN_ASSIGNOP  reduce using rule 68 (lhs)
+    $default        reduce using rule 81 (arithmetic_expr)
+
+
+State 79
+
+   80 arithmetic_expr: constants .
+
+    $default  reduce using rule 80 (arithmetic_expr)
+
+
+State 80
+
+   33 printFunc: TOKEN_PRFUNC TOKEN_LEFTPAREN . sub_expr TOKEN_RIGHTPAREN
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 118
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 81
+
+   37 loopStmt: TOKEN_LOOP identifier . TOKEN_LEFTPAREN expression TOKEN_UNTIL expression TOKEN_RIGHTPAREN $@8 compoundStmt
+
+    TOKEN_LEFTPAREN  shift, and go to state 119
+
+
+State 82
+
+   34 conditionStmt: TOKEN_IFCONDITION TOKEN_LEFTPAREN . expression TOKEN_RIGHTPAREN compoundStmt
+   35              | TOKEN_IFCONDITION TOKEN_LEFTPAREN . expression TOKEN_RIGHTPAREN compoundStmt TOKEN_ELSECONDITION compoundStmt
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    expression       go to state 120
+    sub_expr         go to state 121
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 83
+
+   30 singleStmt: TOKEN_CONTINUESTMT TOKEN_SEMICOLON .
+
+    $default  reduce using rule 30 (singleStmt)
+
+
+State 84
+
+   31 singleStmt: TOKEN_BREAKSTMT TOKEN_SEMICOLON .
+
+    $default  reduce using rule 31 (singleStmt)
+
+
+State 85
+
+   28 singleStmt: printFunc TOKEN_SEMICOLON .
+
+    $default  reduce using rule 28 (singleStmt)
+
+
+State 86
+
+   27 singleStmt: functionCall TOKEN_SEMICOLON .
+
+    $default  reduce using rule 27 (singleStmt)
+
+
+State 87
+
+   44 declaration: declaration_list TOKEN_SEMICOLON .
+
+    $default  reduce using rule 44 (declaration)
+
+
+State 88
+
+   45 declaration_list: declaration_list TOKEN_COMMA . sub_decl
+
+    TOKEN_ID  shift, and go to state 12
+
+    sub_decl         go to state 122
+    assignment_expr  go to state 63
+    lhs              go to state 64
+    identifier       go to state 94
+    array_access     go to state 66
+
+
+State 89
+
+   63 assgn: TOKEN_ASSIGNOP .
+
+    $default  reduce using rule 63 (assgn)
+
+
+State 90
+
+   64 assignment_expr: lhs assgn . arithmetic_expr
+   65                | lhs assgn . functionCall
+   66                | lhs assgn . array_init
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_LCB          shift, and go to state 123
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    functionCall     go to state 124
+    identifier       go to state 125
+    arithmetic_expr  go to state 126
+    array_init       go to state 127
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 91
+
+   38 functionCall: identifier TOKEN_LEFTPAREN . parameter_list TOKEN_RIGHTPAREN
+   39             | identifier TOKEN_LEFTPAREN . TOKEN_RIGHTPAREN
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_RIGHTPAREN   shift, and go to state 128
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    parameter_list   go to state 129
+    parameter        go to state 130
+    sub_expr         go to state 131
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 92
+
+   85 array_access: identifier TOKEN_LB . constants TOKEN_RB
+
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+
+    constants  go to state 132
+
+
+State 93
+
+   43 declaration: typeSpecifier declaration_list . TOKEN_SEMICOLON
+   45 declaration_list: declaration_list . TOKEN_COMMA sub_decl
+
+    TOKEN_SEMICOLON  shift, and go to state 133
+    TOKEN_COMMA      shift, and go to state 88
+
+
+State 94
+
+   48 sub_decl: identifier .
+   67 lhs: identifier .
+   85 array_access: identifier . TOKEN_LB constants TOKEN_RB
+
+    TOKEN_LB  shift, and go to state 92
+
+    TOKEN_ASSIGNOP  reduce using rule 67 (lhs)
+    $default        reduce using rule 48 (sub_decl)
+
+
+State 95
+
+   12 function: typeSpecifier identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function .
+
+    $default  reduce using rule 12 (function)
+
+
+State 96
+
+    7 function: typeSpecifier . TOKEN_MAINFUNC $@1 TOKEN_LEFTPAREN $@2 TOKEN_RIGHTPAREN $@3 compoundStmt
+   12         | typeSpecifier . identifier $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    TOKEN_ID        shift, and go to state 12
+    TOKEN_MAINFUNC  shift, and go to state 13
+
+    identifier  go to state 134
+
+
+State 97
+
+   79 arithmetic_expr: identifier .
+   85 array_access: identifier . TOKEN_LB constants TOKEN_RB
+
+    TOKEN_LB  shift, and go to state 92
+
+    $default  reduce using rule 79 (arithmetic_expr)
+
+
+State 98
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+   77                | TOKEN_LEFTPAREN arithmetic_expr . TOKEN_RIGHTPAREN
+
+    TOKEN_RIGHTPAREN  shift, and go to state 135
+    TOKEN_PLUS        shift, and go to state 111
+    TOKEN_MINUS       shift, and go to state 112
+    TOKEN_MUL         shift, and go to state 113
+    TOKEN_DIV         shift, and go to state 114
+    TOKEN_POW         shift, and go to state 115
+    TOKEN_BITWISEAND  shift, and go to state 116
+    TOKEN_BITWISEOR   shift, and go to state 117
+
+
+State 99
+
+   81 arithmetic_expr: array_access .
+
+    $default  reduce using rule 81 (arithmetic_expr)
+
+
+State 100
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+   78                | TOKEN_MINUS arithmetic_expr .
+
+    $default  reduce using rule 78 (arithmetic_expr)
+
+
+State 101
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+   60         | TOKEN_LOGICNOT sub_expr .
+
+    $default  reduce using rule 60 (sub_expr)
+
+
+State 102
+
+   32 singleStmt: TOKEN_RETURN sub_expr TOKEN_SEMICOLON .
+
+    $default  reduce using rule 32 (singleStmt)
+
+
+State 103
+
+   58 sub_expr: sub_expr TOKEN_LOGICAND . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 136
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 104
+
+   59 sub_expr: sub_expr TOKEN_LOGICOR . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 137
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 105
+
+   54 sub_expr: sub_expr TOKEN_EQ . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 138
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 106
+
+   55 sub_expr: sub_expr TOKEN_NOTEQ . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 139
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 107
+
+   52 sub_expr: sub_expr TOKEN_GR . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 140
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 108
+
+   53 sub_expr: sub_expr TOKEN_LS . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 141
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 109
+
+   56 sub_expr: sub_expr TOKEN_LSEQ . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 142
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 110
+
+   57 sub_expr: sub_expr TOKEN_GREQ . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 143
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 111
+
+   70 arithmetic_expr: arithmetic_expr TOKEN_PLUS . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 144
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 112
+
+   71 arithmetic_expr: arithmetic_expr TOKEN_MINUS . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 145
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 113
+
+   72 arithmetic_expr: arithmetic_expr TOKEN_MUL . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 146
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 114
+
+   73 arithmetic_expr: arithmetic_expr TOKEN_DIV . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 147
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 115
+
+   74 arithmetic_expr: arithmetic_expr TOKEN_POW . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 148
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 116
+
+   75 arithmetic_expr: arithmetic_expr TOKEN_BITWISEAND . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 149
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 117
+
+   76 arithmetic_expr: arithmetic_expr TOKEN_BITWISEOR . arithmetic_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+
+    identifier       go to state 97
+    arithmetic_expr  go to state 150
+    array_access     go to state 99
+    constants        go to state 79
+
+
+State 118
+
+   33 printFunc: TOKEN_PRFUNC TOKEN_LEFTPAREN sub_expr . TOKEN_RIGHTPAREN
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_RIGHTPAREN  shift, and go to state 151
+    TOKEN_LOGICAND    shift, and go to state 103
+    TOKEN_LOGICOR     shift, and go to state 104
+    TOKEN_EQ          shift, and go to state 105
+    TOKEN_NOTEQ       shift, and go to state 106
+    TOKEN_GR          shift, and go to state 107
+    TOKEN_LS          shift, and go to state 108
+    TOKEN_LSEQ        shift, and go to state 109
+    TOKEN_GREQ        shift, and go to state 110
+
+
+State 119
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN . expression TOKEN_UNTIL expression TOKEN_RIGHTPAREN $@8 compoundStmt
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    expression       go to state 152
+    sub_expr         go to state 121
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 120
+
+   34 conditionStmt: TOKEN_IFCONDITION TOKEN_LEFTPAREN expression . TOKEN_RIGHTPAREN compoundStmt
+   35              | TOKEN_IFCONDITION TOKEN_LEFTPAREN expression . TOKEN_RIGHTPAREN compoundStmt TOKEN_ELSECONDITION compoundStmt
+   50 expression: expression . TOKEN_COMMA sub_expr
+
+    TOKEN_RIGHTPAREN  shift, and go to state 153
+    TOKEN_COMMA       shift, and go to state 154
+
+
+State 121
+
+   51 expression: sub_expr .
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_LOGICAND  shift, and go to state 103
+    TOKEN_LOGICOR   shift, and go to state 104
+    TOKEN_EQ        shift, and go to state 105
+    TOKEN_NOTEQ     shift, and go to state 106
+    TOKEN_GR        shift, and go to state 107
+    TOKEN_LS        shift, and go to state 108
+    TOKEN_LSEQ      shift, and go to state 109
+    TOKEN_GREQ      shift, and go to state 110
+
+    $default  reduce using rule 51 (expression)
+
+
+State 122
+
+   45 declaration_list: declaration_list TOKEN_COMMA sub_decl .
+
+    $default  reduce using rule 45 (declaration_list)
+
+
+State 123
+
+   84 array_init: TOKEN_LCB . array_init_vars TOKEN_RCB
+
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+
+    array_init_vars  go to state 155
+    constants        go to state 156
+
+
+State 124
+
+   65 assignment_expr: lhs assgn functionCall .
+
+    $default  reduce using rule 65 (assignment_expr)
+
+
+State 125
+
+   38 functionCall: identifier . TOKEN_LEFTPAREN parameter_list TOKEN_RIGHTPAREN
+   39             | identifier . TOKEN_LEFTPAREN TOKEN_RIGHTPAREN
+   79 arithmetic_expr: identifier .
+   85 array_access: identifier . TOKEN_LB constants TOKEN_RB
+
+    TOKEN_LEFTPAREN  shift, and go to state 91
+    TOKEN_LB         shift, and go to state 92
+
+    $default  reduce using rule 79 (arithmetic_expr)
+
+
+State 126
+
+   64 assignment_expr: lhs assgn arithmetic_expr .
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    TOKEN_PLUS        shift, and go to state 111
+    TOKEN_MINUS       shift, and go to state 112
+    TOKEN_MUL         shift, and go to state 113
+    TOKEN_DIV         shift, and go to state 114
+    TOKEN_POW         shift, and go to state 115
+    TOKEN_BITWISEAND  shift, and go to state 116
+    TOKEN_BITWISEOR   shift, and go to state 117
+
+    $default  reduce using rule 64 (assignment_expr)
+
+
+State 127
+
+   66 assignment_expr: lhs assgn array_init .
+
+    $default  reduce using rule 66 (assignment_expr)
+
+
+State 128
+
+   39 functionCall: identifier TOKEN_LEFTPAREN TOKEN_RIGHTPAREN .
+
+    $default  reduce using rule 39 (functionCall)
+
+
+State 129
+
+   38 functionCall: identifier TOKEN_LEFTPAREN parameter_list . TOKEN_RIGHTPAREN
+   40 parameter_list: parameter_list . TOKEN_COMMA parameter
+
+    TOKEN_RIGHTPAREN  shift, and go to state 157
+    TOKEN_COMMA       shift, and go to state 158
+
+
+State 130
+
+   41 parameter_list: parameter .
+
+    $default  reduce using rule 41 (parameter_list)
+
+
+State 131
+
+   42 parameter: sub_expr .
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_LOGICAND  shift, and go to state 103
+    TOKEN_LOGICOR   shift, and go to state 104
+    TOKEN_EQ        shift, and go to state 105
+    TOKEN_NOTEQ     shift, and go to state 106
+    TOKEN_GR        shift, and go to state 107
+    TOKEN_LS        shift, and go to state 108
+    TOKEN_LSEQ      shift, and go to state 109
+    TOKEN_GREQ      shift, and go to state 110
+
+    $default  reduce using rule 42 (parameter)
+
+
+State 132
+
+   85 array_access: identifier TOKEN_LB constants . TOKEN_RB
+
+    TOKEN_RB  shift, and go to state 159
+
+
+State 133
+
+   43 declaration: typeSpecifier declaration_list TOKEN_SEMICOLON .
+
+    $default  reduce using rule 43 (declaration)
+
+
+State 134
+
+   12 function: typeSpecifier identifier . $@4 TOKEN_LEFTPAREN $@5 argumentList TOKEN_RIGHTPAREN $@6 compoundStmt $@7 function
+
+    $default  reduce using rule 8 ($@4)
+
+    $@4  go to state 17
+
+
+State 135
+
+   77 arithmetic_expr: TOKEN_LEFTPAREN arithmetic_expr TOKEN_RIGHTPAREN .
+
+    $default  reduce using rule 77 (arithmetic_expr)
+
+
+State 136
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   58         | sub_expr TOKEN_LOGICAND sub_expr .
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_EQ     shift, and go to state 105
+    TOKEN_NOTEQ  shift, and go to state 106
+    TOKEN_GR     shift, and go to state 107
+    TOKEN_LS     shift, and go to state 108
+    TOKEN_LSEQ   shift, and go to state 109
+    TOKEN_GREQ   shift, and go to state 110
+
+    $default  reduce using rule 58 (sub_expr)
+
+
+State 137
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+   59         | sub_expr TOKEN_LOGICOR sub_expr .
+
+    TOKEN_LOGICAND  shift, and go to state 103
+    TOKEN_EQ        shift, and go to state 105
+    TOKEN_NOTEQ     shift, and go to state 106
+    TOKEN_GR        shift, and go to state 107
+    TOKEN_LS        shift, and go to state 108
+    TOKEN_LSEQ      shift, and go to state 109
+    TOKEN_GREQ      shift, and go to state 110
+
+    $default  reduce using rule 59 (sub_expr)
+
+
+State 138
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   54         | sub_expr TOKEN_EQ sub_expr .
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_GR    shift, and go to state 107
+    TOKEN_LS    shift, and go to state 108
+    TOKEN_LSEQ  shift, and go to state 109
+    TOKEN_GREQ  shift, and go to state 110
+
+    $default  reduce using rule 54 (sub_expr)
+
+
+State 139
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   55         | sub_expr TOKEN_NOTEQ sub_expr .
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_GR    shift, and go to state 107
+    TOKEN_LS    shift, and go to state 108
+    TOKEN_LSEQ  shift, and go to state 109
+    TOKEN_GREQ  shift, and go to state 110
+
+    $default  reduce using rule 55 (sub_expr)
+
+
+State 140
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   52         | sub_expr TOKEN_GR sub_expr .
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    $default  reduce using rule 52 (sub_expr)
+
+
+State 141
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   53         | sub_expr TOKEN_LS sub_expr .
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    $default  reduce using rule 53 (sub_expr)
+
+
+State 142
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   56         | sub_expr TOKEN_LSEQ sub_expr .
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    $default  reduce using rule 56 (sub_expr)
+
+
+State 143
+
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   57         | sub_expr TOKEN_GREQ sub_expr .
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    $default  reduce using rule 57 (sub_expr)
+
+
+State 144
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   70                | arithmetic_expr TOKEN_PLUS arithmetic_expr .
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    TOKEN_MUL  shift, and go to state 113
+    TOKEN_DIV  shift, and go to state 114
+    TOKEN_POW  shift, and go to state 115
+
+    $default  reduce using rule 70 (arithmetic_expr)
+
+
+State 145
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   71                | arithmetic_expr TOKEN_MINUS arithmetic_expr .
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    TOKEN_MUL  shift, and go to state 113
+    TOKEN_DIV  shift, and go to state 114
+    TOKEN_POW  shift, and go to state 115
+
+    $default  reduce using rule 71 (arithmetic_expr)
+
+
+State 146
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   72                | arithmetic_expr TOKEN_MUL arithmetic_expr .
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    TOKEN_POW  shift, and go to state 115
+
+    $default  reduce using rule 72 (arithmetic_expr)
+
+
+State 147
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   73                | arithmetic_expr TOKEN_DIV arithmetic_expr .
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    TOKEN_POW  shift, and go to state 115
+
+    $default  reduce using rule 73 (arithmetic_expr)
+
+
+State 148
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   74                | arithmetic_expr TOKEN_POW arithmetic_expr .
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    $default  reduce using rule 74 (arithmetic_expr)
+
+
+State 149
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   75                | arithmetic_expr TOKEN_BITWISEAND arithmetic_expr .
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+
+    TOKEN_PLUS   shift, and go to state 111
+    TOKEN_MINUS  shift, and go to state 112
+    TOKEN_MUL    shift, and go to state 113
+    TOKEN_DIV    shift, and go to state 114
+    TOKEN_POW    shift, and go to state 115
+
+    $default  reduce using rule 75 (arithmetic_expr)
+
+
+State 150
+
+   70 arithmetic_expr: arithmetic_expr . TOKEN_PLUS arithmetic_expr
+   71                | arithmetic_expr . TOKEN_MINUS arithmetic_expr
+   72                | arithmetic_expr . TOKEN_MUL arithmetic_expr
+   73                | arithmetic_expr . TOKEN_DIV arithmetic_expr
+   74                | arithmetic_expr . TOKEN_POW arithmetic_expr
+   75                | arithmetic_expr . TOKEN_BITWISEAND arithmetic_expr
+   76                | arithmetic_expr . TOKEN_BITWISEOR arithmetic_expr
+   76                | arithmetic_expr TOKEN_BITWISEOR arithmetic_expr .
+
+    TOKEN_PLUS   shift, and go to state 111
+    TOKEN_MINUS  shift, and go to state 112
+    TOKEN_MUL    shift, and go to state 113
+    TOKEN_DIV    shift, and go to state 114
+    TOKEN_POW    shift, and go to state 115
+
+    $default  reduce using rule 76 (arithmetic_expr)
+
+
+State 151
+
+   33 printFunc: TOKEN_PRFUNC TOKEN_LEFTPAREN sub_expr TOKEN_RIGHTPAREN .
+
+    $default  reduce using rule 33 (printFunc)
+
+
+State 152
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN expression . TOKEN_UNTIL expression TOKEN_RIGHTPAREN $@8 compoundStmt
+   50 expression: expression . TOKEN_COMMA sub_expr
+
+    TOKEN_COMMA  shift, and go to state 154
+    TOKEN_UNTIL  shift, and go to state 160
+
+
+State 153
+
+   34 conditionStmt: TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN . compoundStmt
+   35              | TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN . compoundStmt TOKEN_ELSECONDITION compoundStmt
+
+    TOKEN_LCB  shift, and go to state 38
+
+    compoundStmt  go to state 161
+
+
+State 154
+
+   50 expression: expression TOKEN_COMMA . sub_expr
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    sub_expr         go to state 162
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 155
+
+   82 array_init_vars: array_init_vars . TOKEN_COMMA constants
+   84 array_init: TOKEN_LCB array_init_vars . TOKEN_RCB
+
+    TOKEN_RCB    shift, and go to state 163
+    TOKEN_COMMA  shift, and go to state 164
+
+
+State 156
+
+   83 array_init_vars: constants .
+
+    $default  reduce using rule 83 (array_init_vars)
+
+
+State 157
+
+   38 functionCall: identifier TOKEN_LEFTPAREN parameter_list TOKEN_RIGHTPAREN .
+
+    $default  reduce using rule 38 (functionCall)
+
+
+State 158
+
+   40 parameter_list: parameter_list TOKEN_COMMA . parameter
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    parameter        go to state 165
+    sub_expr         go to state 131
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 159
+
+   85 array_access: identifier TOKEN_LB constants TOKEN_RB .
+
+    $default  reduce using rule 85 (array_access)
+
+
+State 160
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN expression TOKEN_UNTIL . expression TOKEN_RIGHTPAREN $@8 compoundStmt
+
+    TOKEN_ID           shift, and go to state 12
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_LEFTPAREN    shift, and go to state 70
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+    TOKEN_MINUS        shift, and go to state 72
+    TOKEN_LOGICNOT     shift, and go to state 73
+
+    expression       go to state 166
+    sub_expr         go to state 121
+    assignment_expr  go to state 75
+    lhs              go to state 64
+    identifier       go to state 76
+    arithmetic_expr  go to state 77
+    array_access     go to state 78
+    constants        go to state 79
+
+
+State 161
+
+   34 conditionStmt: TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt .
+   35              | TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt . TOKEN_ELSECONDITION compoundStmt
+
+    TOKEN_ELSECONDITION  shift, and go to state 167
+
+    $default  reduce using rule 34 (conditionStmt)
+
+
+State 162
+
+   50 expression: expression TOKEN_COMMA sub_expr .
+   52 sub_expr: sub_expr . TOKEN_GR sub_expr
+   53         | sub_expr . TOKEN_LS sub_expr
+   54         | sub_expr . TOKEN_EQ sub_expr
+   55         | sub_expr . TOKEN_NOTEQ sub_expr
+   56         | sub_expr . TOKEN_LSEQ sub_expr
+   57         | sub_expr . TOKEN_GREQ sub_expr
+   58         | sub_expr . TOKEN_LOGICAND sub_expr
+   59         | sub_expr . TOKEN_LOGICOR sub_expr
+
+    TOKEN_LOGICAND  shift, and go to state 103
+    TOKEN_LOGICOR   shift, and go to state 104
+    TOKEN_EQ        shift, and go to state 105
+    TOKEN_NOTEQ     shift, and go to state 106
+    TOKEN_GR        shift, and go to state 107
+    TOKEN_LS        shift, and go to state 108
+    TOKEN_LSEQ      shift, and go to state 109
+    TOKEN_GREQ      shift, and go to state 110
+
+    $default  reduce using rule 50 (expression)
+
+
+State 163
+
+   84 array_init: TOKEN_LCB array_init_vars TOKEN_RCB .
+
+    $default  reduce using rule 84 (array_init)
+
+
+State 164
+
+   82 array_init_vars: array_init_vars TOKEN_COMMA . constants
+
+    TOKEN_STRINGCONST  shift, and go to state 19
+    TOKEN_CHARCONST    shift, and go to state 20
+    TOKEN_INTCONST     shift, and go to state 21
+    TOKEN_FLOATCONST   shift, and go to state 22
+
+    constants  go to state 168
+
+
+State 165
+
+   40 parameter_list: parameter_list TOKEN_COMMA parameter .
+
+    $default  reduce using rule 40 (parameter_list)
+
+
+State 166
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN expression TOKEN_UNTIL expression . TOKEN_RIGHTPAREN $@8 compoundStmt
+   50 expression: expression . TOKEN_COMMA sub_expr
+
+    TOKEN_RIGHTPAREN  shift, and go to state 169
+    TOKEN_COMMA       shift, and go to state 154
+
+
+State 167
+
+   35 conditionStmt: TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt TOKEN_ELSECONDITION . compoundStmt
+
+    TOKEN_LCB  shift, and go to state 38
+
+    compoundStmt  go to state 170
+
+
+State 168
+
+   82 array_init_vars: array_init_vars TOKEN_COMMA constants .
+
+    $default  reduce using rule 82 (array_init_vars)
+
+
+State 169
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN expression TOKEN_UNTIL expression TOKEN_RIGHTPAREN . $@8 compoundStmt
+
+    $default  reduce using rule 36 ($@8)
+
+    $@8  go to state 171
+
+
+State 170
+
+   35 conditionStmt: TOKEN_IFCONDITION TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN compoundStmt TOKEN_ELSECONDITION compoundStmt .
+
+    $default  reduce using rule 35 (conditionStmt)
+
+
+State 171
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN expression TOKEN_UNTIL expression TOKEN_RIGHTPAREN $@8 . compoundStmt
+
+    TOKEN_LCB  shift, and go to state 38
+
+    compoundStmt  go to state 172
+
+
+State 172
+
+   37 loopStmt: TOKEN_LOOP identifier TOKEN_LEFTPAREN expression TOKEN_UNTIL expression TOKEN_RIGHTPAREN $@8 compoundStmt .
+
+    $default  reduce using rule 37 (loopStmt)

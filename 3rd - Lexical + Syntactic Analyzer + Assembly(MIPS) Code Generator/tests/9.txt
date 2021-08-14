@@ -1,0 +1,66 @@
+input:
+
+
+int main(){
+	int a = 9;
+	if(a < 9){
+		a = a * 9;
+	}
+	int DBZ = 9 - a / 9;
+	callWhat(DBZ);
+}
+
+output:
+
+
+
+[+] Parse : 
+
+ PROGRAM  main_function  typeSpecifier int main  (  )  compoundStmt  { 1455823138 statements  stmt 2099905184 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier a identifier  TOKEN_ID = constants 9 ;  statements  stmt 1455823138 singleStmt  conditionStmt  if  (  expression  sub_expr  sub_expr  identifier a <  sub_expr  constants 9 )  compoundStmt  { 2099905184 statements  stmt 2099905184 singleStmt  declaration  declaration_list  sub_decl  assignment_expr  identifier a identifier  TOKEN_ID = arithmetic_expr  identifier a *  constants 9 ;  }  statements  stmt 1455823138 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier DBZ identifier  TOKEN_ID = arithmetic_expr  constants 9 -  arithmetic_expr  identifier a /  constants 9 ;  statements  stmt 1455823138 singleStmt  functionCall  identifier callWhat (  parameter  sub_expr  identifier DBZ )  ;  } 
+
+
+[+] ASM :
+.data
+        backn: .asciiz "\n"
+.text
+.globl main
+main :
+        daddiu  $sp,$sp,-12
+        sd      $fp,4($sp)
+        move    $fp,$sp
+        li      $t0,9
+        sw      $t0,0($fp)
+        lw  $t0,0($fp)
+        move  $t0,$t6
+        li  $t0,9
+        move  $t0,$t7
+        bge  $t6,$7,C0
+        nop
+        li    $t0,0
+        lw    $t1,0($fp)
+        li   $t4,9
+        mul   $t3,$t1,$t4
+        sw     $t0,0($fp)
+C0:
+        li    $t0,0
+        lw    $t1,0($fp)
+        addiu   $t0,$t1,-9
+        sw     $t0,0($fp)
+        lw  $t0,0($fp)
+        move $t0,a1
+        jal callWhat
+        move    $v0,$0
+        move    $sp,$fp
+        ld      $fp,4($sp)
+        daddiu  $sp,$sp,12
+        j       $31
+        nop
+
+
+
+[#] ERRORS :
+
+
+[-] ERROR : LINE 8 COLUMN 16 : Variable not declared
+[-] ERROR : LINE 8 COLUMN 21 : function arguments count mismatch
+ellie@ubuntu:~/Documents/workspace/compiler 3rd/c/Elaheh_ToulabiNejad_9631232_2nd$ BB

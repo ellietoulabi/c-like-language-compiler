@@ -1,0 +1,63 @@
+input:
+
+int func(){
+	void doesNotReturn;
+	return doesNotReturn;
+}
+
+
+int main(){
+	int comp = 5;
+	int result = func();
+	return 0;
+}
+
+output:
+
+
+
+
+[+] Parse : 
+
+ PROGRAM  function  typeSpecifier int identifier func (  )  compoundStmt  { 538250075 statements  stmt 538250075 singleStmt  declaration  typeSpecifier void declaration_list  sub_decl  identifier doesNotReturn ;  statements  stmt 538250075 singleStmt return sub_expr  identifier doesNotReturn ;  }  main_function  typeSpecifier int main  (  )  compoundStmt  { 847532031 statements  stmt 847532031 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier comp identifier  TOKEN_ID = constants 5 ;  statements  stmt 847532031 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier result identifier  TOKEN_ID = functionCall  identifier func (  )  ;  statements  stmt 847532031 singleStmt return sub_expr  constants 0 ;  } 
+
+
+[+] ASM :
+.data
+        backn: .asciiz "\n"
+.text
+.globl main
+func:
+        daddiu  $sp,$sp,-12
+        sd      $fp,4($sp)
+        move    $fp,$sp
+        lw     $t0,0($fp)
+        move $t0,$v0
+        move    $sp,$fp
+        ld      $fp,4($sp)
+        daddiu  $sp,$sp,12
+        j       $31
+        nop
+main :
+        daddiu  $sp,$sp,-16
+        sd      $fp,8($sp)
+        move    $fp,$sp
+        li      $t0,5
+        sw      $t0,0($fp)
+        jal func
+        sw   $v0,4($fp)
+        move $t0,$v0
+        move    $v0,$0
+        move    $sp,$fp
+        ld      $fp,8($sp)
+        daddiu  $sp,$sp,16
+        j       $31
+        nop
+
+
+
+[#] ERRORS :
+
+
+[-] ERROR : LINE 4 COLUMN 29 : return type does not match function type
+ellie@ubuntu:~/Document

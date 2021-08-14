@@ -1,0 +1,67 @@
+input:
+
+
+
+int main(){
+
+	int k[9];
+
+	int i=0;
+
+	foreach i(0...8){
+
+		k[1]=i;
+		print(k[1]);
+	
+	}
+
+
+}
+
+
+output:
+
+
+[+] Parse : 
+
+ PROGRAM  main_function  typeSpecifier int main  (  )  compoundStmt  { 380587252 statements  stmt 1624385753 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  array_access  identifier k [  constants 9 ]  ;  statements  stmt 1624385753 singleStmt  declaration  typeSpecifier int declaration_list  sub_decl  assignment_expr  identifier i identifier  TOKEN_ID = constants 0 ;  statements  stmt 380587252 singleStmt  loopStmt  foreach  identifier i (  expression  sub_expr  constants 0 ..  expression  sub_expr  constants 8 )  compoundStmt  { 1624385753 statements  stmt 1624385753 singleStmt  declaration  declaration_list  sub_decl  assignment_expr  array_access  identifier k [  constants 1 ]  array_access  identifier  TOKEN_ID  TOKEN_LB  constants  TOKEN_INTCONST  TOKEN_RB = identifier i ;  statements  stmt 1624385753 singleStmt  printFunc  (  sub_expr  array_access  identifier k [  constants 1 ]  )  ;  }  } 
+
+
+[+] ASM :
+.data
+        backn: .asciiz "\n"
+.text
+.globl main
+main :
+        daddiu  $sp,$sp,-8
+        sd      $fp,0($sp)
+        move    $fp,$sp
+        li      $t0,0
+        sw      $t0,36($fp)
+L1:
+        li    $s0,0
+        li    $s1,8
+        bgt   $s0,$s1,L0
+        nop
+        sw    $s0,36($fp)
+        lw  $t0,36($fp)
+        sw   $t0,4($fp)
+        lw     $a0,4($fp)
+        li   $v0,1
+        syscall
+        addiu $s0,$s0,1
+        sw    $s0,36($fp)
+        b     L1
+        nop
+L0
+        move    $v0,$0
+        move    $sp,$fp
+        ld      $fp,0($sp)
+        daddiu  $sp,$sp,8
+        j       $31
+        nop
+
+
+
+[#] ERRORS :
+
